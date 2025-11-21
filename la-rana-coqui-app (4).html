@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Rana Coquí – Practice App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f6f8fb;
+      color: #222;
+    }
+
+    header {
+      background: #22577A;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+    }
+
+    header p {
+      margin: 0.25rem 0 0;
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 1rem auto 2rem;
+      padding: 0 1rem;
+    }
+
+    .nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav button {
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      border: 1px solid #22577A;
+      background: white;
+      color: #22577A;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav button:hover {
+      background: #e8f4f6;
+      transform: translateY(-1px);
+    }
+
+    .nav button.active {
+      background: #22577A;
+      color: #fff;
+    }
+
+    .nav button.active:hover {
+      background: #1a4460;
+    }
+
+    .section {
+      display: none;
+      background: #fff;
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-size: 1.3rem;
+      color: #22577A;
+    }
+
+    button.small {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+
+    button.small:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    button.icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+    }
+
+    /* Filter Buttons */
+    .filter-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid #38A3A5;
+      background: white;
+      color: #38A3A5;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      background: #e8f6f7;
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active {
+      background: #38A3A5;
+      color: #fff;
+    }
+
+    .filter-btn.active:hover {
+      background: #2d8284;
+    }
+
+    /* Database Table */
+    .vocab-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .vocab-table thead {
+      background: #f7fafc;
+      border-bottom: 2px solid #e0e7ff;
+    }
+
+    .vocab-table th {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      font-weight: 600;
+      color: #22577A;
+      font-size: 0.9rem;
+    }
+
+    .vocab-table td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #e8ecf0;
+      font-size: 0.9rem;
+    }
+
+    .vocab-table tr:hover {
+      background: #f7fafc;
+    }
+
+    .vocab-table .spanish-word {
+      font-weight: 600;
+      color: #22577A;
+    }
+
+    .vocab-table .type-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #e8f6f7;
+      color: #38A3A5;
+      border: 1px solid #38A3A5;
+    }
+
+    .vocab-table .audio-btn-small {
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid #22577A;
+      background: white;
+      color: #22577A;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+    }
+
+    .vocab-table .audio-btn-small:hover {
+      background: #e8f4f6;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 600px) {
+      .vocab-table {
+        font-size: 0.85rem;
+      }
+      
+      .vocab-table th,
+      .vocab-table td {
+        padding: 0.4rem 0.5rem;
+      }
+    }
+
+    /* Flashcards */
+    .flashcard-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .flashcard {
+      width: 100%;
+      max-width: 400px;
+      min-height: 160px;
+      border-radius: 0.75rem;
+      border: 2px solid #38A3A5;
+      background: #e8f6f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .flashcard:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(56, 163, 165, 0.3);
+    }
+
+    .flashcard:active {
+      transform: scale(0.98);
+    }
+
+    .flashcard span.label {
+      position: absolute;
+      top: 0.35rem;
+      left: 0.75rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #555;
+    }
+
+    .flashcard span.type {
+      position: absolute;
+      top: 0.35rem;
+      right: 0.75rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #555;
+    }
+
+    .flashcard-main {
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .flashcard-sub {
+      font-size: 1rem;
+      color: #333;
+      display: none; /* Hide subtitle - we only show one side at a time */
+    }
+
+    .flashcard-hint {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #555;
+    }
+
+    .flashcard-controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .flashcard-controls button {
+      padding: 0.4rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid #38A3A5;
+      background: #38A3A5;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .flashcard-controls button.secondary {
+      background: #fff;
+      color: #38A3A5;
+    }
+
+    .flashcard-controls button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    /* Phrases */
+    .phrases-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .phrase-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      padding: 0.6rem 0.7rem;
+      border-radius: 0.5rem;
+      background: #f3f6ff;
+      border: 1px solid #d7e0ff;
+    }
+
+    .phrase-main {
+      font-weight: 600;
+    }
+
+    .phrase-translation {
+      font-size: 0.9rem;
+      color: #333;
+      display: none;
+    }
+
+    .phrase-buttons {
+      margin-top: 0.25rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .phrase-buttons button {
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid #22577A;
+      background: white;
+      color: #22577A;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+    }
+
+    .phrase-buttons button:hover {
+      background: #e8f4f6;
+      transform: translateY(-1px);
+    }
+
+    /* Dialogues */
+    .dialogue-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .dialogue-selector button {
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid #22577A;
+      background: #fff;
+      color: #22577A;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .dialogue-selector button:hover {
+      background: #e8f4f6;
+      transform: translateY(-1px);
+    }
+
+    .dialogue-selector button.active {
+      background: #22577A;
+      color: #fff;
+    }
+
+    .dialogue-selector button.active:hover {
+      background: #1a4460;
+    }
+
+    .dialogue-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .dialogue-col {
+      background: #f7fafc;
+      border-radius: 0.5rem;
+      padding: 0.6rem 0.7rem;
+      border: 1px solid #e0e7ff;
+      font-size: 0.95rem;
+    }
+
+    .dialogue-col h3 {
+      margin-top: 0;
+      margin-bottom: 0.4rem;
+      font-size: 1rem;
+      color: #22577A;
+    }
+
+    .dialogue-line {
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+
+    .dialogue-text {
+      flex: 1;
+    }
+
+    .speaker {
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .dialogue-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Quiz */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .quiz-question {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .quiz-options button {
+      text-align: left;
+      padding: 0.4rem 0.7rem;
+      border-radius: 0.4rem;
+      border: 1px solid #22577A;
+      background: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .quiz-options button:hover:not(.correct):not(.incorrect) {
+      background: #e8f4f6;
+    }
+
+    .quiz-options button.correct {
+      background: #38A3A5;
+      color: #fff;
+      border-color: #38A3A5;
+      cursor: default;
+    }
+
+    .quiz-options button.incorrect {
+      background: #E63946;
+      color: #fff;
+      border-color: #E63946;
+      cursor: default;
+    }
+
+    .quiz-feedback {
+      min-height: 1.2rem;
+      font-size: 0.95rem;
+    }
+
+    .quiz-next {
+      margin-top: 0.4rem;
+      display: none;
+    }
+
+    .quiz-next.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>La Rana Coquí – Practice App</h1>
+    <p>Vocabulary • Phrases • Dialogues • Quiz (Spanish & English)</p>
+  </header>
+
+  <main class="container">
+    <nav class="nav">
+      <button class="active" data-section="flashcards">Flashcards – Vocabulary</button>
+      <button data-section="database">Vocabulary Database</button>
+      <button data-section="phrases">Phrases</button>
+      <button data-section="dialogues">Dialogues</button>
+      <button data-section="quiz">Quiz</button>
+    </nav>
+
+    <!-- Flashcards Section -->
+    <section id="flashcards" class="section active">
+      <h2>Flashcards – Vocabulary</h2>
+      <p>Click on the card to flip between <strong>Spanish</strong> and <strong>English</strong>. Use the buttons to change cards. Use 🔊 to hear Spanish.</p>
+      
+      <div style="margin-bottom: 1rem;">
+        <strong style="display: block; margin-bottom: 0.5rem;">Filter by type:</strong>
+        <div class="filter-buttons" id="flashcard-filters">
+          <button class="filter-btn active" data-filter="all">All Words</button>
+          <button class="filter-btn" data-filter="verbo">Verbs</button>
+          <button class="filter-btn" data-filter="sustantivo">Nouns</button>
+          <button class="filter-btn" data-filter="adjetivo">Adjectives</button>
+        </div>
+        <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #555;">
+          <span id="card-count"></span>
+        </div>
+      </div>
+
+      <div class="flashcard-wrapper">
+        <div class="flashcard" id="flashcard">
+          <span class="label" id="flashcard-language-label">Español</span>
+          <span class="type" id="flashcard-type"></span>
+          <div class="flashcard-main" id="flashcard-main"></div>
+          <div class="flashcard-hint">Click to flip</div>
+        </div>
+        <div class="flashcard-controls">
+          <button id="prev-card" class="secondary">◀ Previous</button>
+          <button id="next-card">Next ▶</button>
+          <button id="shuffle-cards" class="secondary">Shuffle</button>
+          <button id="flashcard-audio" class="secondary icon small">🔊 Hear Spanish</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vocabulary Database Section -->
+    <section id="database" class="section">
+      <h2>Vocabulary Database</h2>
+      <p>Browse all vocabulary words organized by type. Click 🔊 to hear the Spanish pronunciation.</p>
+      
+      <div style="margin-bottom: 1rem;">
+        <strong style="display: block; margin-bottom: 0.5rem;">Filter by type:</strong>
+        <div class="filter-buttons" id="database-filters">
+          <button class="filter-btn active" data-filter="all">All Words (61)</button>
+          <button class="filter-btn" data-filter="verbo">Verbs</button>
+          <button class="filter-btn" data-filter="sustantivo">Nouns</button>
+          <button class="filter-btn" data-filter="adjetivo">Adjectives</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <input 
+          type="text" 
+          id="database-search" 
+          placeholder="Search in Spanish or English..." 
+          style="width: 100%; max-width: 400px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 0.9rem;"
+        />
+      </div>
+
+      <div id="database-content">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Phrases Section -->
+    <section id="phrases" class="section">
+      <h2>Phrases – Spanish & English</h2>
+      <p>Click "Show translation" to see the English meaning. Use 🔊 to hear the Spanish phrase.</p>
+      <div class="phrases-list" id="phrases-list">
+        <!-- Filled by JS -->
+      </div>
+    </section>
+
+    <!-- Dialogues Section -->
+    <section id="dialogues" class="section">
+      <h2>Dialogues – Sofía & the Coquí</h2>
+      <p>Select a dialogue and read it in Spanish and English. Use 🔊 to hear individual Spanish lines.</p>
+      <div class="dialogue-selector" id="dialogue-selector">
+        <!-- Buttons by JS -->
+      </div>
+      <div class="dialogue-grid">
+        <div class="dialogue-col">
+          <h3>Español</h3>
+          <div id="dialogue-es"></div>
+        </div>
+        <div class="dialogue-col">
+          <h3>English</h3>
+          <div id="dialogue-en"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz Section -->
+    <section id="quiz" class="section">
+      <h2>Quiz – Vocabulary</h2>
+      <p>Choose the correct English meaning for the Spanish word. Click 🔊 to hear the Spanish word.</p>
+      
+      <div style="margin-bottom: 1rem;">
+        <strong style="display: block; margin-bottom: 0.5rem;">Quiz from:</strong>
+        <div class="filter-buttons" id="quiz-filters">
+          <button class="filter-btn active" data-filter="all">All Words</button>
+          <button class="filter-btn" data-filter="verbo">Verbs Only</button>
+          <button class="filter-btn" data-filter="sustantivo">Nouns Only</button>
+          <button class="filter-btn" data-filter="adjetivo">Adjectives Only</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1rem; padding: 0.75rem; background: #f7fafc; border-radius: 0.5rem; border: 1px solid #e0e7ff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <strong style="color: #22577A;">Progress:</strong> 
+            <span id="quiz-progress">Question 1 of 20</span>
+          </div>
+          <div>
+            <strong style="color: #22577A;">Score:</strong> 
+            <span id="quiz-score">0 / 0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz-container">
+        <div class="quiz-question" id="quiz-question"></div>
+        <button id="quiz-audio" class="small icon">🔊 Hear Spanish</button>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button id="quiz-next" class="small" style="align-self:flex-start;">Next question ▶</button>
+        <button id="quiz-restart" class="small" style="align-self:flex-start; display: none; background: #38A3A5; color: white; border: 1px solid #38A3A5; padding: 0.4rem 0.8rem; cursor: pointer; border-radius: 999px;">Start New Quiz</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // =============================
+    // SPEECH SYNTHESIS (AUDIO)
+    // =============================
+    let spanishVoice = null;
+
+    function loadVoices() {
+      const voices = window.speechSynthesis.getVoices();
+      spanishVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("es"));
+    }
+
+    if ('speechSynthesis' in window) {
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function speakSpanish(text) {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+      if (!text) return;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "es-ES";
+      if (spanishVoice) {
+        utter.voice = spanishVoice;
+      }
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    // =============================
+    // DATA
+    // =============================
+
+    const vocabulary = [
+      // Verbs
+      { es: "visitar", en: "to visit", type: "verbo / verb" },
+      { es: "preparar", en: "to prepare", type: "verbo / verb" },
+      { es: "oler", en: "to smell", type: "verbo / verb" },
+      { es: "escuchar", en: "to listen", type: "verbo / verb" },
+      { es: "abrir", en: "to open", type: "verbo / verb" },
+      { es: "mirar", en: "to look", type: "verbo / verb" },
+      { es: "saltar", en: "to jump", type: "verbo / verb" },
+      { es: "cantar", en: "to sing", type: "verbo / verb" },
+      { es: "seguir", en: "to follow", type: "verbo / verb" },
+      { es: "vivir", en: "to live", type: "verbo / verb" },
+      { es: "tocar", en: "to touch", type: "verbo / verb" },
+      { es: "beber", en: "to drink", type: "verbo / verb" },
+      { es: "mezclar", en: "to mix", type: "verbo / verb" },
+      { es: "probar", en: "to taste / to try", type: "verbo / verb" },
+      { es: "guiar", en: "to guide", type: "verbo / verb" },
+      { es: "sonreír", en: "to smile", type: "verbo / verb" },
+      { es: "sentir", en: "to feel", type: "verbo / verb" },
+      { es: "venir", en: "to come", type: "verbo / verb" },
+      { es: "querer", en: "to want", type: "verbo / verb" },
+      { es: "hacer", en: "to make / to do", type: "verbo / verb" },
+      { es: "gustar", en: "to like / to please", type: "verbo / verb" },
+      { es: "poder", en: "to be able to / can", type: "verbo / verb" },
+      { es: "decir", en: "to say / to tell", type: "verbo / verb" },
+      { es: "hablar", en: "to speak / to talk", type: "verbo / verb" },
+      { es: "esperar", en: "to wait / to hope", type: "verbo / verb" },
+      { es: "volver", en: "to return / to come back", type: "verbo / verb" },
+      { es: "guardar", en: "to keep / to save", type: "verbo / verb" },
+      // Nouns
+      { es: "el coquí", en: "the coquí (frog)", type: "sustantivo / noun" },
+      { es: "Sofía", en: "Sofía", type: "sustantivo / noun" },
+      { es: "Abuela", en: "Grandma", type: "sustantivo / noun" },
+      { es: "Adjuntas", en: "Adjuntas (town in Puerto Rico)", type: "sustantivo / noun" },
+      { es: "el chocolate caliente", en: "hot chocolate", type: "sustantivo / noun" },
+      { es: "el chocolate", en: "chocolate", type: "sustantivo / noun" },
+      { es: "la canela", en: "cinnamon", type: "sustantivo / noun" },
+      { es: "la casa", en: "house", type: "sustantivo / noun" },
+      { es: "la ventana", en: "window", type: "sustantivo / noun" },
+      { es: "el árbol de ausubo", en: "ausubo tree", type: "sustantivo / noun" },
+      { es: "el bosque", en: "forest", type: "sustantivo / noun" },
+      { es: "la bebida", en: "drink", type: "sustantivo / noun" },
+      { es: "la guayaba", en: "guava", type: "sustantivo / noun" },
+      { es: "el tazón / el cuenco", en: "bowl", type: "sustantivo / noun" },
+      { es: "el olor", en: "smell", type: "sustantivo / noun" },
+      { es: "la noche", en: "night", type: "sustantivo / noun" },
+      { es: "el amigo / la amiga", en: "friend", type: "sustantivo / noun" },
+      { es: "el canto", en: "song / singing", type: "sustantivo / noun" },
+      { es: "la risa", en: "laugh / laughter", type: "sustantivo / noun" },
+      { es: "la estrella", en: "star", type: "sustantivo / noun" },
+      { es: "la lluvia", en: "rain", type: "sustantivo / noun" },
+      { es: "el sol", en: "sun", type: "sustantivo / noun" },
+      { es: "la niña", en: "girl", type: "sustantivo / noun" },
+      { es: "la historia", en: "story", type: "sustantivo / noun" },
+      { es: "el lugar", en: "place", type: "sustantivo / noun" },
+      { es: "la voz", en: "voice", type: "sustantivo / noun" },
+      // Adjectives
+      { es: "pequeño", en: "small", type: "adjetivo / adjective" },
+      { es: "verde", en: "green", type: "adjetivo / adjective" },
+      { es: "curioso", en: "curious", type: "adjetivo / adjective" },
+      { es: "gracioso", en: "funny", type: "adjetivo / adjective" },
+      { es: "dulce", en: "sweet", type: "adjetivo / adjective" },
+      { es: "fuerte", en: "strong", type: "adjetivo / adjective" },
+      { es: "brillante", en: "bright", type: "adjetivo / adjective" },
+      { es: "mágico", en: "magical", type: "adjetivo / adjective" },
+      { es: "amable", en: "kind", type: "adjetivo / adjective" },
+      { es: "rico", en: "good / delicious", type: "adjetivo / adjective" },
+      { es: "ruidoso", en: "noisy", type: "adjetivo / adjective" },
+      { es: "feliz", en: "happy", type: "adjetivo / adjective" }
+    ];
+
+    const phrases = [
+      { es: "Sofía visita a su Abuela.", en: "Sofía visits her Grandma." },
+      { es: "Sofía está en Adjuntas.", en: "Sofía is in Adjuntas." },
+      { es: "Abuela prepara chocolate.", en: "Grandma prepares chocolate." },
+      { es: "El chocolate huele dulce.", en: "The chocolate smells sweet." },
+      { es: "El olor sale por la ventana.", en: "The smell goes out the window." },
+      { es: "Sofía escucha a los coquís.", en: "Sofía listens to the coquís." },
+      { es: "Un coquí mira a Sofía.", en: "A coquí looks at Sofía." },
+      { es: "El coquí salta.", en: "The coquí jumps." },
+      { es: "El coquí canta co-quí.", en: "The coquí sings co-quí." },
+      { es: "Sofía abre la ventana.", en: "Sofía opens the window." },
+      { es: "Sofía sigue al coquí.", en: "Sofía follows the coquí." },
+      { es: "El coquí quiere oler el chocolate.", en: "The coquí wants to smell the chocolate." },
+      { es: "Sofía toca el árbol.", en: "Sofía touches the tree." },
+      { es: "Los coquís viven en el bosque.", en: "The coquís live in the forest." },
+      { es: "Sofía sonríe.", en: "Sofía smiles." }
+    ];
+
+    const dialogues = [
+      {
+        title: "Diálogo 1 – El chocolate",
+        es: [
+          "Sofía: Hola, coquí. ¿Por qué vienes aquí?",
+          "Coquí: Co-quííí… El chocolate huele rico.",
+          "Sofía: ¿Quieres olerlo?",
+          "Coquí: ¡Sí! Es dulce.",
+          "Sofía: No puedes beber chocolate.",
+          "Coquí: ¿No?",
+          "Sofía: Pero puedo hacer otra bebida.",
+          "Coquí: ¿Para mí?",
+          "Sofía: Sí, una bebida de guayaba.",
+          "Coquí: Co-QUÍ! Me gusta la guayaba.",
+          "Sofía: Eres curioso y gracioso.",
+          "Coquí: Tú eres amable. Vamos al árbol.",
+          "Sofía: Te sigo.",
+          "Coquí: ¡Somos amigos! Co-quííí!"
+        ],
+        en: [
+          "Sofía: Hi, coquí. Why do you come here?",
+          "Coquí: Co-quííí… The chocolate smells good.",
+          "Sofía: Do you want to smell it?",
+          "Coquí: Yes! It is sweet.",
+          "Sofía: You can't drink chocolate.",
+          "Coquí: No?",
+          "Sofía: But I can make another drink.",
+          "Coquí: For me?",
+          "Sofía: Yes, a guava drink.",
+          "Coquí: Co-QUÍ! I like guava.",
+          "Sofía: You are curious and funny.",
+          "Coquí: You are kind. Let's go to the tree.",
+          "Sofía: I follow you.",
+          "Coquí: We are friends! Co-quííí!"
+        ]
+      },
+      {
+        title: "Diálogo 2 – La noche en Adjuntas",
+        es: [
+          "Sofía: La noche es muy ruidosa aquí.",
+          "Coquí: Sí, los coquís cantan mucho.",
+          "Sofía: Me gusta su canción.",
+          "Coquí: Nuestra canción dice: aquí estamos.",
+          "Sofía: ¿Te gusta vivir en Adjuntas?",
+          "Coquí: Sí, hay árboles, lluvia y estrellas.",
+          "Sofía: Yo escucho tu canto y me siento en casa.",
+          "Coquí: Yo escucho tu risa y me siento feliz.",
+          "Sofía: Gracias por cantar conmigo esta noche.",
+          "Coquí: Gracias por escuchar. No todos escuchan.",
+          "Sofía: Voy a contarle a Abuela de ti.",
+          "Coquí: Dile que el bosque la saluda.",
+          "Sofía: Buenas noches, coquí.",
+          "Coquí: Buenas noches, Sofía. Co-quííí."
+        ],
+        en: [
+          "Sofía: The night is very noisy here.",
+          "Coquí: Yes, the coquís sing a lot.",
+          "Sofía: I like their song.",
+          "Coquí: Our song says: we are here.",
+          "Sofía: Do you like living in Adjuntas?",
+          "Coquí: Yes, there are trees, rain, and stars.",
+          "Sofía: I hear your song and I feel at home.",
+          "Coquí: I hear your laugh and I feel happy.",
+          "Sofía: Thank you for singing with me tonight.",
+          "Coquí: Thank you for listening. Not everyone listens.",
+          "Sofía: I am going to tell Grandma about you.",
+          "Coquí: Tell her the forest says hello.",
+          "Sofía: Good night, coquí.",
+          "Coquí: Good night, Sofía. Co-quííí."
+        ]
+      },
+      {
+        title: "Diálogo 3 – El árbol mágico",
+        es: [
+          "Sofía: Este árbol es muy grande.",
+          "Coquí: Sí, es un árbol mágico.",
+          "Sofía: ¿Por qué es mágico?",
+          "Coquí: Guarda historias del bosque.",
+          "Sofía: ¿Yo puedo escuchar una historia?",
+          "Coquí: Sí, si tocas el árbol con cuidado.",
+          "Sofía: (toca el árbol) Siento algo…",
+          "Coquí: Sientes la voz del bosque.",
+          "Sofía: El árbol habla de lluvia y de sol.",
+          "Coquí: Habla de niñas y de coquís amigos.",
+          "Sofía: Me gusta este lugar.",
+          "Coquí: A mí también. Aquí te espero cada noche.",
+          "Sofía: Volveré con más historias para el árbol.",
+          "Coquí: Y yo cantaré para ti. Co-quííí."
+        ],
+        en: [
+          "Sofía: This tree is very big.",
+          "Coquí: Yes, it is a magical tree.",
+          "Sofía: Why is it magical?",
+          "Coquí: It keeps stories from the forest.",
+          "Sofía: Can I listen to a story?",
+          "Coquí: Yes, if you touch the tree carefully.",
+          "Sofía: (touches the tree) I feel something…",
+          "Coquí: You feel the voice of the forest.",
+          "Sofía: The tree talks about rain and sun.",
+          "Coquí: It talks about girls and coquí friends.",
+          "Sofía: I like this place.",
+          "Coquí: Me too. I wait for you here every night.",
+          "Sofía: I will come back with more stories for the tree.",
+          "Coquí: And I will sing for you. Co-quííí."
+        ]
+      }
+    ];
+
+    // =============================
+    // SECTION NAVIGATION
+    // =============================
+    const navButtons = document.querySelectorAll(".nav button");
+    const sections = document.querySelectorAll(".section");
+
+    navButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-section");
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        sections.forEach(sec => {
+          sec.classList.toggle("active", sec.id === target);
+        });
+      });
+    });
+
+    // =============================
+    // FLASHCARDS LOGIC
+    // =============================
+    let currentCardIndex = 0;
+    let showingSpanish = true;
+    let filteredVocabulary = [...vocabulary]; // Current filtered set
+    let currentFilter = "all";
+
+    const flashcardEl = document.getElementById("flashcard");
+    const flashMain = document.getElementById("flashcard-main");
+    const flashLabel = document.getElementById("flashcard-language-label");
+    const flashType = document.getElementById("flashcard-type");
+    const flashAudioBtn = document.getElementById("flashcard-audio");
+    const cardCountEl = document.getElementById("card-count");
+
+    function updateCardCount() {
+      cardCountEl.textContent = `Showing ${filteredVocabulary.length} of ${vocabulary.length} words`;
+    }
+
+    function filterVocabulary(filter) {
+      currentFilter = filter;
+      if (filter === "all") {
+        filteredVocabulary = [...vocabulary];
+      } else {
+        filteredVocabulary = vocabulary.filter(item => 
+          item.type.toLowerCase().includes(filter.toLowerCase())
+        );
+      }
+      currentCardIndex = 0;
+      showingSpanish = true;
+      updateCardCount();
+      if (filteredVocabulary.length > 0) {
+        showCard(currentCardIndex);
+      } else {
+        flashMain.textContent = "No words found";
+        flashSub.textContent = "";
+        flashType.textContent = "";
+      }
+    }
+
+    function showCard(index) {
+      if (filteredVocabulary.length === 0) return;
+      const item = filteredVocabulary[index];
+      if (showingSpanish) {
+        flashMain.textContent = item.es;
+        flashLabel.textContent = "Español";
+      } else {
+        flashMain.textContent = item.en;
+        flashLabel.textContent = "English";
+      }
+      flashType.textContent = item.type;
+    }
+
+    // Filter buttons
+    document.getElementById("flashcard-filters").addEventListener("click", (e) => {
+      if (e.target.classList.contains("filter-btn")) {
+        document.querySelectorAll("#flashcard-filters .filter-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+        e.target.classList.add("active");
+        filterVocabulary(e.target.dataset.filter);
+      }
+    });
+
+    flashcardEl.addEventListener("click", () => {
+      showingSpanish = !showingSpanish;
+      showCard(currentCardIndex);
+    });
+
+    document.getElementById("next-card").addEventListener("click", () => {
+      currentCardIndex = (currentCardIndex + 1) % filteredVocabulary.length;
+      showingSpanish = true;
+      showCard(currentCardIndex);
+    });
+
+    document.getElementById("prev-card").addEventListener("click", () => {
+      currentCardIndex = (currentCardIndex - 1 + filteredVocabulary.length) % filteredVocabulary.length;
+      showingSpanish = true;
+      showCard(currentCardIndex);
+    });
+
+    document.getElementById("shuffle-cards").addEventListener("click", () => {
+      currentCardIndex = Math.floor(Math.random() * filteredVocabulary.length);
+      showingSpanish = true;
+      showCard(currentCardIndex);
+    });
+
+    flashAudioBtn.addEventListener("click", () => {
+      if (filteredVocabulary.length > 0) {
+        const word = filteredVocabulary[currentCardIndex].es;
+        speakSpanish(word);
+      }
+    });
+
+    // Initialize first card
+    updateCardCount();
+    showCard(currentCardIndex);
+
+    // =============================
+    // VOCABULARY DATABASE LOGIC
+    // =============================
+    const databaseContentEl = document.getElementById("database-content");
+    const databaseSearchEl = document.getElementById("database-search");
+    let databaseFilter = "all";
+    let searchTerm = "";
+
+    function getTypeDisplay(type) {
+      if (type.includes("verbo")) return "Verb";
+      if (type.includes("sustantivo")) return "Noun";
+      if (type.includes("adjetivo")) return "Adjective";
+      return type;
+    }
+
+    function renderDatabase() {
+      let filtered = vocabulary;
+      
+      // Apply type filter
+      if (databaseFilter !== "all") {
+        filtered = filtered.filter(item => 
+          item.type.toLowerCase().includes(databaseFilter.toLowerCase())
+        );
+      }
+      
+      // Apply search filter
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        filtered = filtered.filter(item => 
+          item.es.toLowerCase().includes(term) || 
+          item.en.toLowerCase().includes(term)
+        );
+      }
+
+      // Update filter button counts
+      const verbCount = vocabulary.filter(v => v.type.includes("verbo")).length;
+      const nounCount = vocabulary.filter(v => v.type.includes("sustantivo")).length;
+      const adjCount = vocabulary.filter(v => v.type.includes("adjetivo")).length;
+      
+      document.querySelectorAll("#database-filters .filter-btn").forEach(btn => {
+        const filter = btn.dataset.filter;
+        if (filter === "all") {
+          btn.textContent = `All Words (${vocabulary.length})`;
+        } else if (filter === "verbo") {
+          btn.textContent = `Verbs (${verbCount})`;
+        } else if (filter === "sustantivo") {
+          btn.textContent = `Nouns (${nounCount})`;
+        } else if (filter === "adjetivo") {
+          btn.textContent = `Adjectives (${adjCount})`;
+        }
+      });
+
+      // Group by type
+      const grouped = {
+        verbs: filtered.filter(v => v.type.includes("verbo")),
+        nouns: filtered.filter(v => v.type.includes("sustantivo")),
+        adjectives: filtered.filter(v => v.type.includes("adjetivo"))
+      };
+
+      let html = "";
+      
+      if (filtered.length === 0) {
+        html = '<p style="text-align: center; color: #666; padding: 2rem;">No words found matching your search.</p>';
+      } else {
+        // Show each category if it has items
+        if (grouped.verbs.length > 0) {
+          html += `<h3 style="color: #22577A; margin-top: 1.5rem; margin-bottom: 0.5rem;">Verbs (${grouped.verbs.length})</h3>`;
+          html += renderTable(grouped.verbs);
+        }
+        
+        if (grouped.nouns.length > 0) {
+          html += `<h3 style="color: #22577A; margin-top: 1.5rem; margin-bottom: 0.5rem;">Nouns (${grouped.nouns.length})</h3>`;
+          html += renderTable(grouped.nouns);
+        }
+        
+        if (grouped.adjectives.length > 0) {
+          html += `<h3 style="color: #22577A; margin-top: 1.5rem; margin-bottom: 0.5rem;">Adjectives (${grouped.adjectives.length})</h3>`;
+          html += renderTable(grouped.adjectives);
+        }
+      }
+
+      databaseContentEl.innerHTML = html;
+
+      // Add audio button listeners
+      databaseContentEl.querySelectorAll(".audio-btn-small").forEach(btn => {
+        btn.addEventListener("click", () => {
+          speakSpanish(btn.dataset.word);
+        });
+      });
+    }
+
+    function renderTable(items) {
+      let html = '<table class="vocab-table"><thead><tr>';
+      html += '<th>Spanish</th>';
+      html += '<th>English</th>';
+      html += '<th>Type</th>';
+      html += '<th>Audio</th>';
+      html += '</tr></thead><tbody>';
+
+      items.forEach(item => {
+        html += '<tr>';
+        html += `<td class="spanish-word">${item.es}</td>`;
+        html += `<td>${item.en}</td>`;
+        html += `<td><span class="type-badge">${getTypeDisplay(item.type)}</span></td>`;
+        html += `<td><button class="audio-btn-small" data-word="${item.es}">🔊</button></td>`;
+        html += '</tr>';
+      });
+
+      html += '</tbody></table>';
+      return html;
+    }
+
+    // Database filter buttons
+    document.getElementById("database-filters").addEventListener("click", (e) => {
+      if (e.target.classList.contains("filter-btn")) {
+        document.querySelectorAll("#database-filters .filter-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+        e.target.classList.add("active");
+        databaseFilter = e.target.dataset.filter;
+        renderDatabase();
+      }
+    });
+
+    // Database search
+    databaseSearchEl.addEventListener("input", (e) => {
+      searchTerm = e.target.value;
+      renderDatabase();
+    });
+
+    // Initialize database
+    renderDatabase();
+
+    // =============================
+    // PHRASES LOGIC
+    // =============================
+    const phrasesListEl = document.getElementById("phrases-list");
+
+    phrases.forEach((p) => {
+      const item = document.createElement("div");
+      item.className = "phrase-item";
+
+      const main = document.createElement("div");
+      main.className = "phrase-main";
+      main.textContent = p.es;
+
+      const translation = document.createElement("div");
+      translation.className = "phrase-translation";
+      translation.textContent = p.en;
+
+      const buttonsDiv = document.createElement("div");
+      buttonsDiv.className = "phrase-buttons";
+
+      const showBtn = document.createElement("button");
+      showBtn.textContent = "Show translation";
+      showBtn.addEventListener("click", () => {
+        const visible = translation.style.display === "block";
+        translation.style.display = visible ? "none" : "block";
+        showBtn.textContent = visible ? "Show translation" : "Hide translation";
+      });
+
+      const audioBtn = document.createElement("button");
+      audioBtn.textContent = "🔊 Hear Spanish";
+      audioBtn.classList.add("small");
+      audioBtn.addEventListener("click", () => {
+        speakSpanish(p.es);
+      });
+
+      buttonsDiv.appendChild(showBtn);
+      buttonsDiv.appendChild(audioBtn);
+      item.appendChild(main);
+      item.appendChild(translation);
+      item.appendChild(buttonsDiv);
+
+      phrasesListEl.appendChild(item);
+    });
+
+    // =============================
+    // DIALOGUES LOGIC
+    // =============================
+    const dialogueSelectorEl = document.getElementById("dialogue-selector");
+    const dialogueEsEl = document.getElementById("dialogue-es");
+    const dialogueEnEl = document.getElementById("dialogue-en");
+
+    function renderDialogue(index) {
+      const dlg = dialogues[index];
+
+      dialogueEsEl.innerHTML = "";
+      dialogueEnEl.innerHTML = "";
+
+      dlg.es.forEach(line => {
+        const lineDiv = document.createElement("div");
+        lineDiv.className = "dialogue-line";
+
+        const textSpan = document.createElement("span");
+        textSpan.className = "dialogue-text";
+        textSpan.textContent = line;
+
+        const audioBtn = document.createElement("button");
+        audioBtn.className = "small icon";
+        audioBtn.textContent = "🔊";
+        audioBtn.title = "Hear Spanish";
+        audioBtn.addEventListener("click", () => {
+          speakSpanish(line);
+        });
+
+        lineDiv.appendChild(textSpan);
+        lineDiv.appendChild(audioBtn);
+        dialogueEsEl.appendChild(lineDiv);
+      });
+
+      dlg.en.forEach(line => {
+        const div = document.createElement("div");
+        div.className = "dialogue-line";
+        const span = document.createElement("span");
+        span.className = "dialogue-text";
+        span.textContent = line;
+        div.appendChild(span);
+        dialogueEnEl.appendChild(div);
+      });
+    }
+
+    dialogues.forEach((dlg, index) => {
+      const btn = document.createElement("button");
+      btn.textContent = dlg.title;
+      if (index === 0) btn.classList.add("active");
+      btn.addEventListener("click", () => {
+        const buttons = dialogueSelectorEl.querySelectorAll("button");
+        buttons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderDialogue(index);
+      });
+      dialogueSelectorEl.appendChild(btn);
+    });
+
+    // Initialize first dialogue
+    renderDialogue(0);
+
+    // =============================
+    // QUIZ LOGIC
+    // =============================
+    const quizQuestionEl = document.getElementById("quiz-question");
+    const quizOptionsEl = document.getElementById("quiz-options");
+    const quizFeedbackEl = document.getElementById("quiz-feedback");
+    const quizNextBtn = document.getElementById("quiz-next");
+    const quizRestartBtn = document.getElementById("quiz-restart");
+    const quizAudioBtn = document.getElementById("quiz-audio");
+    const quizProgressEl = document.getElementById("quiz-progress");
+    const quizScoreEl = document.getElementById("quiz-score");
+
+    let currentQuizItem = null;
+    let quizLocked = false;
+    let quizVocabulary = [...vocabulary]; // Current quiz vocabulary set
+    let quizFilter = "all";
+    let questionNumber = 1;
+    let totalQuestions = 20;
+    let correctAnswers = 0;
+    let totalAnswered = 0;
+    let askedQuestions = []; // Track which questions we've asked
+
+    function getRandomInt(max) {
+      return Math.floor(Math.random() * max);
+    }
+
+    function updateQuizDisplay() {
+      quizProgressEl.textContent = `Question ${questionNumber} of ${totalQuestions}`;
+      quizScoreEl.textContent = `${correctAnswers} / ${totalAnswered}`;
+    }
+
+    function resetQuiz() {
+      questionNumber = 1;
+      correctAnswers = 0;
+      totalAnswered = 0;
+      askedQuestions = [];
+      quizNextBtn.style.display = "block";
+      quizRestartBtn.style.display = "none";
+      updateQuizDisplay();
+      generateQuizQuestion();
+    }
+
+    function updateQuizVocabulary(filter) {
+      quizFilter = filter;
+      if (filter === "all") {
+        quizVocabulary = [...vocabulary];
+      } else {
+        quizVocabulary = vocabulary.filter(item => 
+          item.type.toLowerCase().includes(filter.toLowerCase())
+        );
+      }
+      resetQuiz();
+    }
+
+    // Quiz filter buttons
+    document.getElementById("quiz-filters").addEventListener("click", (e) => {
+      if (e.target.classList.contains("filter-btn")) {
+        document.querySelectorAll("#quiz-filters .filter-btn").forEach(btn => {
+          btn.classList.remove("active");
+        });
+        e.target.classList.add("active");
+        updateQuizVocabulary(e.target.dataset.filter);
+      }
+    });
+
+    function showQuizResults() {
+      quizQuestionEl.textContent = "Quiz Complete! 🎉";
+      quizOptionsEl.innerHTML = "";
+      quizNextBtn.style.display = "none";
+      quizRestartBtn.style.display = "block";
+      
+      const percentage = Math.round((correctAnswers / totalQuestions) * 100);
+      let message = "";
+      let emoji = "";
+      
+      if (percentage >= 90) {
+        message = "Excellent work! You're a Spanish star!";
+        emoji = "⭐";
+      } else if (percentage >= 70) {
+        message = "Great job! Keep practicing!";
+        emoji = "👍";
+      } else if (percentage >= 50) {
+        message = "Good effort! Review and try again!";
+        emoji = "📚";
+      } else {
+        message = "Keep studying! You'll improve!";
+        emoji = "💪";
+      }
+      
+      quizFeedbackEl.innerHTML = `
+        <div style="text-align: center; padding: 1rem; background: #e8f6f7; border-radius: 0.5rem; margin-top: 1rem;">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">${emoji}</div>
+          <div style="font-size: 1.3rem; font-weight: 600; color: #22577A; margin-bottom: 0.5rem;">
+            Score: ${correctAnswers} / ${totalQuestions} (${percentage}%)
+          </div>
+          <div style="font-size: 1rem; color: #333;">
+            ${message}
+          </div>
+        </div>
+      `;
+    }
+
+    function generateQuizQuestion() {
+      if (quizVocabulary.length === 0) {
+        quizQuestionEl.textContent = "No words available for this category.";
+        quizOptionsEl.innerHTML = "";
+        quizFeedbackEl.textContent = "";
+        quizNextBtn.classList.remove("visible");
+        return;
+      }
+
+      // Check if we've completed 20 questions
+      if (questionNumber > totalQuestions) {
+        showQuizResults();
+        return;
+      }
+
+      quizLocked = false;
+      quizFeedbackEl.textContent = "";
+      quizNextBtn.classList.remove("visible");
+      updateQuizDisplay();
+
+      // Pick a question we haven't asked yet (if possible)
+      let correctIndex;
+      let attempts = 0;
+      do {
+        correctIndex = getRandomInt(quizVocabulary.length);
+        attempts++;
+      } while (askedQuestions.includes(correctIndex) && attempts < 50 && askedQuestions.length < quizVocabulary.length);
+      
+      askedQuestions.push(correctIndex);
+      currentQuizItem = quizVocabulary[correctIndex];
+
+      quizQuestionEl.textContent = `¿Qué significa en inglés?: "${currentQuizItem.es}"`;
+
+      // generate options from the same filtered set
+      const options = new Set();
+      options.add(correctIndex);
+
+      // Try to get 3 more options from the same vocabulary set
+      let optionAttempts = 0;
+      while (options.size < 4 && options.size < quizVocabulary.length && optionAttempts < 50) {
+        options.add(getRandomInt(quizVocabulary.length));
+        optionAttempts++;
+      }
+
+      const optionIndexes = Array.from(options);
+      // shuffle
+      optionIndexes.sort(() => Math.random() - 0.5);
+
+      quizOptionsEl.innerHTML = "";
+
+      optionIndexes.forEach(idx => {
+        const optItem = quizVocabulary[idx];
+        const btn = document.createElement("button");
+        btn.textContent = optItem.en;
+        btn.addEventListener("click", () => {
+          if (quizLocked) return;
+          quizLocked = true;
+          totalAnswered++;
+          quizNextBtn.classList.add("visible");
+          
+          if (optItem === currentQuizItem) {
+            btn.classList.add("correct");
+            correctAnswers++;
+            quizFeedbackEl.textContent = "✅ Correct!";
+          } else {
+            btn.classList.add("incorrect");
+            quizFeedbackEl.textContent = `❌ Not correct. The answer is: "${currentQuizItem.en}".`;
+            // highlight correct one
+            Array.from(quizOptionsEl.children).forEach(child => {
+              if (child.textContent === currentQuizItem.en) {
+                child.classList.add("correct");
+              }
+            });
+          }
+          updateQuizDisplay();
+        });
+        quizOptionsEl.appendChild(btn);
+      });
+    }
+
+    quizNextBtn.addEventListener("click", () => {
+      questionNumber++;
+      generateQuizQuestion();
+    });
+
+    quizRestartBtn.addEventListener("click", resetQuiz);
+
+    quizAudioBtn.addEventListener("click", () => {
+      if (currentQuizItem) {
+        speakSpanish(currentQuizItem.es);
+      }
+    });
+
+    // Initialize first quiz question
+    updateQuizDisplay();
+    generateQuizQuestion();
+  </script>
+</body>
+</html>
